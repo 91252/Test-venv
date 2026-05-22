@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Калькулятор на Django</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; }
+        form { border: 1px solid #ccc; padding: 20px; border-radius: 10px; background: #f9f9f9; }
+        input, select { padding: 5px; margin: 5px 0; }
+        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; cursor: pointer; }
+        .result { margin-top: 10px; font-weight: bold; color: blue; }
+        .error { color: red; }
+        .history-block { margin-top: 30px; width: 300px; }
+        .history-item { border-bottom: 1px solid #eee; padding: 5px 0; color: #555; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+
+        <input type="number" name="num1" step="any" required placeholder="Число 1">
+        <br>
+        <select name="operation">
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="*">*</option>
+            <option value="/">/</option>
+        </select>
+        <br>
+        <input type="number" name="num2" step="any" required placeholder="Число 2">
+        <br>
+        <button type="submit">Посчитать</button>
+    
+        {% if result is not None %}
+            <div class="result">Результат: {{ result }}</div>
+        {% endif %}
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+    </form>
+    <div class="history-block">
+        <h4>История (последние 5):</h4>
+        {% for item in history %}
+            <div class="history-item">
+                {{ item.num1 }} {{ item.operation }} {{ item.num2 }} = <b>{{ item.result }}</b>
+                <br>
+                <small style="color: #999;">{{ item.created_at|date:"H:i:s" }}</small>
+            </div>
+        {% empty %}
+            <p style="color: gray;">История пуста</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
